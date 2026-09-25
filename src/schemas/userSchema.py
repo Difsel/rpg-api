@@ -24,4 +24,4 @@ class UserResponse(UserBase):
 # Route Response
 class RouterResponse(BaseModel):
 	message: str
-	data: UserResponse | None
+	data: UserResponse

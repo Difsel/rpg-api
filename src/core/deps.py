@@ -8,7 +8,7 @@ from src.core.database import SessionFactory
 from src.repositories.userRepository import UserRepository
 
 #Services
-from src.services.registration import Registration
+from src.services.authService import AuthService
 from src.services.userService import UserService
 
 #create Session
@@ -23,11 +23,11 @@ async def get_user_repository(
 ) -> UserRepository:
 	return UserRepository(session)
 
-# Return registration service with repo
-async def get_registration_service(
+# Return auth service with repo
+async def get_auth_service(
 		repo: UserRepository = Depends(get_user_repository)
-) -> Registration:
-	return Registration(repo)	
+) -> AuthService:
+	return AuthService(repo)	
 
 # Return user service with repo
 async def get_user_service(
