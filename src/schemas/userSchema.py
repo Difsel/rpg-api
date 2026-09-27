@@ -25,3 +25,8 @@ class UserResponse(UserBase):
 class RouterResponse(BaseModel):
 	message: str
 	data: UserResponse
+
+class LoginRouter_response(BaseModel):
+	message: str
+	data: UserResponse
+	token: str

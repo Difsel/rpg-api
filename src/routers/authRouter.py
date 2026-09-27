@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.core.deps import get_auth_service
-from src.schemas.userSchema import RouterResponse, UserCreate
+from src.schemas.userSchema import RouterResponse, UserCreate, LoginRouter_response
 
 from src.services.authService import AuthService
 from src.exceptions.mainExceptions import InvalidCredentialsError
+from src.tools.jwt import create_access_token
 
 
 router = APIRouter()
@@ -22,7 +23,7 @@ async def register(
 		"data": user,
 	}
 
-@router.post('/login', response_model=RouterResponse)
+@router.post('/login', response_model=LoginRouter_response)
 async def login(
 	data: UserCreate,
 	service: AuthService = Depends(get_auth_service)
@@ -35,7 +36,10 @@ async def login(
 			detail="Invalid email or password"
 		)
 
+	token = create_access_token(user.id)
+	
 	return {
 		"message": "User sign in succesfully",
 		"data": user,
+		"token": token
 	}
