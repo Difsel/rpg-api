@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator, Field
+from pydantic import BaseModel, ConfigDict, field_validator, Field
 from datetime import datetime
 
 class UserBase(BaseModel):
@@ -18,10 +18,14 @@ class UserResponse(UserBase):
 	id: int
 	created_at: datetime
 
-	class Config:
-		from_attributes = True
+	model_config = ConfigDict(from_attributes=True)
 
 # Route Response
 class RouterResponse(BaseModel):
 	message: str
 	data: UserResponse
+
+class LoginRouter_response(BaseModel):
+	message: str
+	data: UserResponse
+	token: str

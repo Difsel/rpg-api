@@ -14,3 +14,5 @@ class UserService:
 			raise UserNotFinded()
 			
 		return UserResponse.model_validate(user)
+
+	
