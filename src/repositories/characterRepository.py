@@ -7,9 +7,10 @@ class CharacterRepository:
 	def __init__(self, session: AsyncSession):
 		self.session = session
 
-	async def create_character(self, name: str):
+	async def create_character(self, owner_id: int, name: str):
 		character = Character(
-			name = name
+			owner_id = owner_id,
+			name = name,
 		)
 		self.session.add(character)
 		await self.session.commit()
