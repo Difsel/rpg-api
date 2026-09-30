@@ -1,7 +1,19 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 
-from src.models.user import Character
+from src.models.user import Character, InventoryItem
+
+ALLOWED_FIELDS = {
+    "health", "stamina", "mana", "level", "exp",
+    "max_health", "max_stamina", "max_mana", "max_exp",
+}
+
+ALLOWED_SLOTS = {
+    "helmet_id", "chestplate_id", "legging_id", "boot_id",
+    "main_hand_id", "off_hand_id",
+    "usage_id",
+  	"shell_id"
+}
 
 class CharacterRepository:
 	def __init__(self, session: AsyncSession):
@@ -36,73 +48,54 @@ class CharacterRepository:
 		return result
 
 	# ------------------change stats-----------------------
-
-	async def change_health(self, character_id: int, health_value: int):
-		command = update(Character).where(character_id == Character.id).values(health=health_value)
-		await self.session.execute(command)
-		await self.session.commit()
-		return True
-
-	async def change_stamina(self, character_id: int, stamina_value: int):
-		command = update(Character).where(character_id == Character.id).values(stamina=stamina_value)
-		await self.session.execute(command)
-		await self.session.commit()
-		return True
-
-	async def change_mana(self, character_id: int, mana_value: int):
-		command = update(Character).where(character_id == Character.id).values(mana=mana_value)
-		await self.session.execute(command)
-		await self.session.commit()
-		return True
-
-	async def change_level(self, character_id: int, level_value: int):
-		command = update(Character).where(character_id == Character.id).values(level=level_value)
-		await self.session.execute(command)
-		await self.session.commit()
-		return True
 	
-	async def change_exp(self, character_id: int, exp_value: int):
-		command = update(Character).where(character_id == Character.id).values(exp=exp_value)
-		await self.session.execute(command)
-		await self.session.commit()
-		return True
+	async def update_stats(self, character_id: int, **fields) -> bool:
+			if not fields.keys() <= ALLOWED_FIELDS:
+					raise ValueError(f"Unknown fields: {fields.keys() - ALLOWED_FIELDS}")
+			return await self._update(character_id, **fields)
 
-  # ---------------- Max stats ------------------
+	# ---------------------------- Equipment ----------------------------------
 
-	async def change_max_health(self, character_id: int, max_health_value: int):
-		command = update(Character).where(character_id == Character.id).values(max_health=max_health_value)
-		await self.session.execute(command)
-		await self.session.commit()
-		return True
-
-	async def change_max_stamina(self, character_id: int, max_stamina_value: int):
-		command = update(Character).where(character_id == Character.id).values(max_stamina=max_stamina_value)
-		await self.session.execute(command)
-		await self.session.commit()
-		return True
-
-	async def change_max_mana(self, character_id: int, max_mana_value: int):
-		command = update(Character).where(character_id == Character.id).values(max_mana=max_mana_value)
-		await self.session.execute(command)
-		await self.session.commit()
-		return True
-	
-	async def change_max_exp(self, character_id: int, max_exp_value: int):
-		command = update(Character).where(character_id == Character.id).values(max_exp=max_exp_value)
-		await self.session.execute(command)
-		await self.session.commit()
-		return True
+	async def equip_equipment(self, character_id: int, **fields) -> bool:
+		if not fields.keys() <= ALLOWED_SLOTS:
+			raise ValueError(f"Unknown slots: {fields.keys() - ALLOWED_SLOTS}")
+		return await self._update(character_id, **fields)
 
 	# ---------------------------- Inventory ----------------------------------
 
-	async def add_item_in_inventory(self):
-		# TODO Реализация добавления предмета
-		raise NotImplementedError
+	async def create_item(self, character_id: int, item_id: str):
+		item = InventoryItem(
+			item_id=item_id,
+			character_id=character_id
+		)
+		self.session.add(item)
+		await self.session.commit()
+		await self.session.refresh(item)
+		return item
 
-	async def remove_item_from_inventory(self):
-		# TODO Реализация удаление предмета из инвентаря
-		raise NotImplementedError
+	async def get_all_items(self, character_id: int) -> list[InventoryItem]:
+		command = select(InventoryItem).where(InventoryItem.character_id == character_id)
+		result = await self.session.execute(command)
+		return list(result.scalars().all())
 
-	async def change_item_from_inventory(self):
-		# TODO Реализация изменения значения предмета из инвентаря
-		raise NotImplementedError
+	async def remove_item(self, character_id: int, item_id: str):
+		command = delete(InventoryItem).where(
+			item_id == InventoryItem.item_id,
+			character_id == InventoryItem.character_id
+		)
+		result = await self.session.execute(command)
+		await self.session.commit()
+		return result.rowcount > 0
+
+	async def add_quantity(self, character_id: int, item_id: str, quantity: int):
+		command = (
+			update(InventoryItem)
+			.where(
+				InventoryItem.character_id == character_id,
+				InventoryItem.item_id == item_id
+			)
+			.values(quantity=InventoryItem.quantity + quantity)
+		)
+		result = await self.session.execute(command)
+		await self.session.commit()
+		return result.rowcount > 0
