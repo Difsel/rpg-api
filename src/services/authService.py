@@ -17,12 +17,12 @@ class AuthService:
 
 	async def login(self, data: UserCreate) -> UserResponse:
 
-		isUser = await self.user_repo.get_by_email(data.email)
-		if not isUser:
-			raise InvalidCredentialsError() 
+		user = await self.user_repo.get_by_email(data.email)
+		if not user:
+			raise InvalidCredentialsError()
 		
-		verify_pass = verify_password(data.password, isUser.password)
+		verify_pass = verify_password(data.password, user.password)
 		if not verify_pass:
 			raise InvalidCredentialsError()
 
-		return UserResponse.model_validate(isUser)
+		return UserResponse.model_validate(user)
