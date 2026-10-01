@@ -28,7 +28,8 @@ class Character(Base):
 	id: Mapped[int] = mapped_column(primary_key=True)
 	owner_id: Mapped[int] = mapped_column(
 		ForeignKey("users.id", ondelete="CASCADE"),
-		index=True
+		index=True,
+		unique=True
 	)
 
 	# Biography
@@ -76,9 +77,6 @@ class Character(Base):
 
 class InventoryItem(Base):
 	__tablename__ = "inventory_items"
-	__table_args__ = (
-		UniqueConstraint("character_id", "item_id", name="uq_character_item"),
-	)
 
 	id: Mapped[int] = mapped_column(primary_key=True)
 	character_id: Mapped[int] = mapped_column(

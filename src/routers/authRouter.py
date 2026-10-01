@@ -31,14 +31,7 @@ async def login(
 	data: UserCreate,
 	service: AuthService = Depends(get_auth_service)
 ):
-	try:
-		user = await service.login(data)
-	except InvalidCredentialsError:
-		raise HTTPException(
-			status_code=status.HTTP_401_UNAUTHORIZED,
-			detail="Invalid email or password"
-		)
-
+	user = await service.login(data)
 	token = create_access_token(user.id)
 	
 	return {

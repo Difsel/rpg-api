@@ -11,7 +11,7 @@ class UserService:
 		user = await self.userRepo.get_by_id(id)
 
 		if not user:
-			raise UserNotFinded()
+			raise UserNotFinded("User with [id:{user_id}] not finded or not exists")
 			
 		return UserResponse.model_validate(user)
 
