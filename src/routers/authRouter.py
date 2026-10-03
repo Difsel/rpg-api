@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from src.core.deps import get_auth_service
+from core.dependencies.deps import get_auth_service
 from src.schemas.userSchema import UserCreate, LoginRouter_response
 
 from src.services.authService import AuthService

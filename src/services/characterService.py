@@ -2,7 +2,7 @@ from src.repositories.characterRepository import CharacterRepository
 from sqlalchemy.exc import IntegrityError
 
 
-from src.models.user import Character
+from src.models.character import Character
 from src.schemas.characterSchema import (
 	CharacterCreate, CharacterRead, RecoveryRead, RecoveryCreate,
 	ItemCreate, ItemRead, ExpCreate, ExpRead, UnequipCreate,

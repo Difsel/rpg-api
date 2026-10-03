@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.services.userService import UserService
-from src.core.deps import get_user_service
+from core.dependencies.deps import get_user_service
 from src.schemas.userSchema import RouterResponse
 from src.tools.jwt import get_current_user_id
 

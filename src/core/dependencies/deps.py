@@ -17,6 +17,7 @@ from src.services.characterService import CharacterService
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
 	async with SessionFactory() as session:
 		yield session
+		
 # ----------
 
 # ------------------- REPOSITORY SESSION RETURN ------------------------

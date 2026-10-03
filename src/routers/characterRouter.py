@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from src.services.characterService import CharacterService
-from src.core.deps import get_character_service
+from core.dependencies.deps import get_character_service
 from src.schemas.characterSchema import RouterResponse, CharacterCreate, ItemCreate, UnequipCreate
 from src.tools.jwt import get_current_user_id
 

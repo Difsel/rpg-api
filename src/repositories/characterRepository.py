@@ -2,7 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from sqlalchemy.orm import selectinload
 
-from src.models.user import Character, InventoryItem
+from src.models.character import Character
+from src.models.inventory import InventoryItem
 
 ALLOWED_FIELDS = {
 	"health", "stamina", "mana", "level", "exp",

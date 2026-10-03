@@ -5,6 +5,11 @@ class Settings(BaseSettings):
     app_name: str
     debug: bool
     database_url: str
+    redis_url: str
+
+    postgres_user: str
+    postgres_password: str
+    postgres_db: str
 
     jwt_secret: str
     jwt_algorithm: str
